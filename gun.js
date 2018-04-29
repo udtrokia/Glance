@@ -1,11 +1,14 @@
 ;(function(){
 
 	/* UNBUILD */
+  /* 定义项目环境，调整 modules */
 	var root;
 	if(typeof window !== "undefined"){ root = window }
 	if(typeof global !== "undefined"){ root = global }
 	root = root || {};
 	var console = root.console || {log: function(){}};
+  
+  /* javascript 工具载入函数 */  
 	function USE(arg){
 		return arg.slice? USE[R(arg)] : function(mod, path){
 			arg(mod = {exports: {}});
@@ -20,6 +23,7 @@
 
 	;USE(function(module){
 		// Generic javascript utilities.
+    /* module 类型分配处理 */
 		var Type = {};
 		//Type.fns = Type.fn = {is: function(fn){ return (!!fn && fn instanceof Function) }}
 		Type.fns = Type.fn = {is: function(fn){ return (!!fn && 'function' == typeof fn) }}
@@ -167,6 +171,7 @@
 
 	;USE(function(module){
 		// On event emitter generic javascript utility.
+      /* 事件处理 */
 		module.exports = function onto(tag, arg, as){
 			if(!tag){ return {to: onto} }
 			var tag = (this.tag || (this.tag = {}))[tag] ||
@@ -207,6 +212,9 @@
 
 	;USE(function(module){
 		/* Based on the Hypothetical Amnesia Machine thought experiment */
+    /* 
+       失忆机器实验 
+     */
 		function HAM(machineState, incomingState, currentState, incomingValue, currentValue){
 			if(machineState < incomingState){
 				return {defer: true}; // the incoming value is outside the boundary of the machine's state, it must be reprocessed in another state.
@@ -253,6 +261,9 @@
 	})(USE, './HAM');
 
 	;USE(function(module){
+    /*
+       存储数据的针对性处理
+     */
 		var Type = USE('./type');
 		var Val = {};
 		Val.is = function(v){ // Valid values are a subset of JSON: null, binary, number (!Infinity), text, or a soul relation. Arrays need special algorithms to handle concurrency, so they are not supported directly. Use an extension that supports them if needed but research their problems first.
@@ -298,6 +309,7 @@
 	})(USE, './val');
 
 	;USE(function(module){
+    /* 数据入库 */
 		var Type = USE('./type');
 		var Val = USE('./val');
 		var Node = {_: '_'};
@@ -357,6 +369,7 @@
 	})(USE, './node');
 
 	;USE(function(module){
+    /* 优化数据传递速度 */
 		var Type = USE('./type');
 		var Node = USE('./node');
 		function State(){
@@ -441,6 +454,7 @@
 	})(USE, './state');
 
 	;USE(function(module){
+    /* 数据检查机制 */
 		var Type = USE('./type');
 		var Val = USE('./val');
 		var Node = USE('./node');
@@ -594,6 +608,7 @@
 	})(USE, './graph');
 
 	;USE(function(module){
+    /* 回传数据 */
 		// request / response module, for asking and acking messages.
 		USE('./onto'); // depends upon onto!
 		module.exports = function ask(cb, as){
@@ -618,6 +633,7 @@
 	})(USE, './ask');
 
 	;USE(function(module){
+    /* 数据失效及消除 */
 		var Type = USE('./type');
 		function Dup(opt){
 			var dup = {s:{}};
@@ -650,7 +666,7 @@
 	})(USE, './dup');
 
 	;USE(function(module){
-
+    /* 链式管理 */
 		function Gun(o){
 			if(o instanceof Gun){ return (this._ = {gun: this}).gun }
 			if(!(this instanceof Gun)){ return new Gun(o) }
@@ -878,6 +894,7 @@
 	})(USE, './root');
 
 	;USE(function(module){
+    /* 链类型处理 */
 		var Gun = USE('./root');
 		Gun.chain.back = function(n, opt){ var tmp;
 			n = n || 1;
@@ -919,6 +936,7 @@
 	})(USE, './back');
 
 	;USE(function(module){
+    /* API制作 */
 		// WARNING: GUN is very simple, but the JavaScript chaining API around GUN
 		// is complicated and was extremely hard to build. If you port GUN to another
 		// language, consider implementing an easier API to build.
@@ -1191,6 +1209,7 @@
 	})(USE, './chain');
 
 	;USE(function(module){
+    /* 链的安全性检测 */
 		var Gun = USE('./root');
 		Gun.chain.get = function(key, cb, as){
 			var gun;
@@ -1269,6 +1288,7 @@
 	})(USE, './get');
 
 	;USE(function(module){
+    /* 同步优化 */
 		var Gun = USE('./root');
 		Gun.chain.put = function(data, cb, as){
 			// #soul.has=value>state
@@ -1498,6 +1518,7 @@
 	})(USE, './put');
 
 	;USE(function(module){
+    /* 打包GUN */
 		var Gun = USE('./root');
 		USE('./chain');
 		USE('./back');
@@ -1507,6 +1528,7 @@
 	})(USE, './index');
 
 	;USE(function(module){
+    /* 服务器回传函数 */
 		var Gun = USE('./index');
 		Gun.chain.on = function(tag, arg, eas, as){
 			var gun = this, at = gun._, tmp, act, off;
@@ -1660,6 +1682,7 @@
 	})(USE, './on');
 
 	;USE(function(module){
+    /* map函数 */
 		var Gun = USE('./index');
 		Gun.chain.map = function(cb, opt, t){
 			var gun = this, cat = gun._, chain;
@@ -1699,6 +1722,7 @@
 	})(USE, './map');
 
 	;USE(function(module){
+    /* 存储函数 */
 		var Gun = USE('./index');
 		Gun.chain.set = function(item, cb, opt){
 			var gun = this, soul;
@@ -1803,6 +1827,7 @@
 	})(USE, './adapters/localStorage');
 
 	;USE(function(module){
+    /* 函数对接,哈希处理 */
 		var Type = USE('../type');
 
 		function Mesh(ctx){
@@ -1996,6 +2021,7 @@
 	})(USE, './adapters/mesh');
 
 	;USE(function(module){
+    /* 网路部分 */
 		var Gun = USE('../index');
 		Gun.Mesh = USE('./mesh');
 
