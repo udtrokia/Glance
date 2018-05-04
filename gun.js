@@ -8,7 +8,7 @@
 	root = root || {};
 	var console = root.console || {log: function(){}};
   
-  /* javascript 工具载入函数 */  
+  /* 通用工具载入函数 */
 	function USE(arg){
 		return arg.slice? USE[R(arg)] : function(mod, path){
 			arg(mod = {exports: {}});
@@ -23,7 +23,7 @@
 
 	;USE(function(module){
 		// Generic javascript utilities.
-    /* module 类型分配处理 */
+    /* module 类型分配处理, 引入包接口 */
 		var Type = {};
 		//Type.fns = Type.fn = {is: function(fn){ return (!!fn && fn instanceof Function) }}
 		Type.fns = Type.fn = {is: function(fn){ return (!!fn && 'function' == typeof fn) }}
@@ -1827,7 +1827,7 @@
 	})(USE, './adapters/localStorage');
 
 	;USE(function(module){
-    /* 函数对接,哈希处理 */
+    /* 函数对接,客户端数据加密处理 */
 		var Type = USE('../type');
 
 		function Mesh(ctx){
